@@ -1,3 +1,6 @@
+require 'active_support/inflector'
+require 'inflections'
+
 module Factoric
   module Base
     def self.included base
@@ -30,7 +33,7 @@ module Factoric
       def has_many_entities entity, options={}
         singular = entity.to_s.singularize
         entity_class = options.fetch(:entity_class, singular.classify.constantize)
-        plural = entity.to_s.pluralize
+        plural = singular.pluralize
         instance_var = "@#{plural}"
 
         define_method singular do |id|
@@ -56,7 +59,7 @@ module Factoric
       @entity_facts = {}
 
       facts.group_by(&:entity).each do |entity, related_facts|
-        entity_name = entity.present? ? entity.downcase : "household"
+        entity_name = entity == "" ? "household" : entity.downcase
 
         @entity_facts[entity_name] = [] unless @entity_facts.has_key? entity_name
         @entity_facts[entity_name] += related_facts
@@ -72,7 +75,7 @@ module Factoric
 
       facts.group_by(&:entity_id).each do |entity_id, details|
         entity = historic_entity.build(entity_id, details, self)
-        entities << entity if entity.present?
+        entities << entity unless entity.nil?
       end
 
       entities.sort { |a,b| a.id <=> b.id }

@@ -29,16 +29,16 @@ module Factoric
         model_name.to_s.downcase
       end
 
-      def build_from_details details=[], household=nil
+      def build_from_details details=[], base=nil
         facts = [*details]
 
         if facts.length > 0
           id = facts.first.entity_id
-          build id, facts, household
+          build id, facts, base
         end
       end
 
-      def build id, details, household=nil
+      def build id, details, base=nil
         return nil if details.any? &:forgotten_all?
 
         facts = {}
@@ -47,7 +47,7 @@ module Factoric
           facts[fact_key] = grouped_facts.sort { |a,b| b.happened_at <=> a.happened_at }
         end
 
-        new id, facts, household
+        new id, facts, base
       end
 
       def attr_collection name, options={}
@@ -65,6 +65,12 @@ module Factoric
           end
 
           collection.compact.uniq.sort{|a, b| a <=> b}
+        end
+      end
+
+      def set_factoric_base_name_as name
+        define_method name do
+          base
         end
       end
 
@@ -109,10 +115,10 @@ module Factoric
       end
     end
 
-    def initialize id, specifics={}, household=nil
+    def initialize id, specifics={}, base=nil
       @id = id
       @specifics = {}
-      @household = household
+      @base = base
 
       specifics.each { |k, v| @specifics[k.to_s] = v }
     end
@@ -149,8 +155,8 @@ module Factoric
       @specifics
     end
 
-    def household
-      @household
+    def base
+      @base
     end
 
     def == candidate
@@ -168,5 +174,4 @@ module Factoric
       id.hash
     end
   end
-
 end
