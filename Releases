@@ -1,0 +1,5 @@
+Release 0.1 
+  - initial gem build
+  - ported over historical details code and tests
+  - changed naming and got specs to pass
+  - added #set_factoric_base_name_as to entity
