@@ -9,7 +9,7 @@ module Factoric
 
     module ClassMethods
       def find id, options={}
-        fact_class = options.fetch(:fact_class) { HistoricalDetail }
+        fact_class = options.fetch(:fact_class) { Factoric::FactStore }
         timestamp = options.fetch(:at) { DateTime.now }
 
         facts = fact_class.find_before id, timestamp
