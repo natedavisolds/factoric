@@ -11,18 +11,18 @@ describe Factoric::Transactor do
   it "#for_portfolio_id looks up the portfolio" do
     portfolio_class = double
     portfolio = double base_id: 7
-    portfolio_class.should_receive(:find).with(8).once.and_return(portfolio)
+    expect(portfolio_class).to receive(:find).with(8).once.and_return(portfolio)
 
     transactor = TestTransactor.for_portfolio_id 8, portfolio_class
 
     committed_fact = transactor.remember(model: "Civic").first
 
-    committed_fact.fact_key.should == "model"
-    committed_fact.value.should == "Civic"
-    committed_fact.happened_at.should be_a Time
-    committed_fact.base_id.should == 7
-    committed_fact.entity.should == "Test"
-    committed_fact.entity_id.should == committed_fact.id
+    expect(committed_fact.fact_key).to eq "model"
+    expect(committed_fact.value).to eq "Civic"
+    expect(committed_fact.happened_at).to be_a Time
+    expect(committed_fact.base_id).to eq 7
+    expect(committed_fact.entity).to eq "Test"
+    expect(committed_fact.entity_id).to eq committed_fact.id
   end
 
   it "instantiates a transactor with a portfolio" do
@@ -31,12 +31,12 @@ describe Factoric::Transactor do
 
     committed_fact = transactor.remember(model: "Civic").first
 
-    committed_fact.fact_key.should == "model"
-    committed_fact.value.should == "Civic"
-    committed_fact.happened_at.should be_a Time
-    committed_fact.base_id.should == 1
-    committed_fact.entity.should == "Test"
-    committed_fact.entity_id.should == committed_fact.id
+    expect(committed_fact.fact_key).to eq "model"
+    expect(committed_fact.value).to eq "Civic"
+    expect(committed_fact.happened_at).to be_a Time
+    expect(committed_fact.base_id).to eq 1
+    expect(committed_fact.entity).to eq "Test"
+    expect(committed_fact.entity_id).to eq committed_fact.id
   end
 
   it "saves a historical details record when passed a hash of information" do
@@ -44,12 +44,12 @@ describe Factoric::Transactor do
 
     committed_fact = transactor.remember(model: "Civic").first
 
-    committed_fact.fact_key.should == "model"
-    committed_fact.value.should == "Civic"
-    committed_fact.happened_at.should be_a Time
-    committed_fact.base_id.should == 1
-    committed_fact.entity.should == "Test"
-    committed_fact.entity_id.should == committed_fact.id
+    expect(committed_fact.fact_key).to eq "model"
+    expect(committed_fact.value).to eq "Civic"
+    expect(committed_fact.happened_at).to be_a Time
+    expect(committed_fact.base_id).to eq 1
+    expect(committed_fact.entity).to eq "Test"
+    expect(committed_fact.entity_id).to eq committed_fact.id
   end
 
   it "creates only one historical detail when passing a date" do
@@ -57,7 +57,7 @@ describe Factoric::Transactor do
 
     committed_facts = transactor.remember(model: Time.now)
 
-    committed_facts.length.should == 1
+    expect(committed_facts.length).to eq 1
   end
 
   it "starts a household when a base_id isn't given" do
@@ -65,7 +65,7 @@ describe Factoric::Transactor do
 
     transactor.remember foo: "bar"
 
-    transactor.base_id.should_not be_nil
+    expect(transactor.base_id).to_not be_nil
   end
 
   it "uses the id of the first historical detail as the entity_id when no id is given" do
@@ -75,28 +75,28 @@ describe Factoric::Transactor do
 
     generated_id = committed_facts.first.entity_id
 
-    generated_id.should_not be_nil
+    expect(generated_id).to_not be_nil
 
-    committed_facts.first.fact_key.should == "model"
-    committed_facts.first.value.should == "Civic"
-    committed_facts.first.happened_at.should be_a Time
-    committed_facts.first.base_id.should == 1
-    committed_facts.first.entity.should == "Test"
-    committed_facts.first.entity_id.should == generated_id
+    expect(committed_facts.first.fact_key).to eq "model"
+    expect(committed_facts.first.value).to eq "Civic"
+    expect(committed_facts.first.happened_at).to be_a Time
+    expect(committed_facts.first.base_id).to eq 1
+    expect(committed_facts.first.entity).to eq "Test"
+    expect(committed_facts.first.entity_id).to eq generated_id
 
-    committed_facts.last.fact_key.should == "make"
-    committed_facts.last.value.should == "Honda"
-    committed_facts.last.happened_at.should be_a Time
-    committed_facts.last.base_id.should == 1
-    committed_facts.last.entity.should == "Test"
-    committed_facts.last.entity_id.should == generated_id
+    expect(committed_facts.last.fact_key).to eq "make"
+    expect(committed_facts.last.value).to eq "Honda"
+    expect(committed_facts.last.happened_at).to be_a Time
+    expect(committed_facts.last.base_id).to eq 1
+    expect(committed_facts.last.entity).to eq "Test"
+    expect(committed_facts.last.entity_id).to eq generated_id
   end
 
   it "sets the id" do
     transactor = TestTransactor.for_base_id 1
     transactor.remember(id: 3453453, model: "Civic", make: "Honda")
 
-    transactor.entity_id.should == 3453453
+    expect(transactor.entity_id).to eq 3453453
   end
 
   it "remembers multiple facts about vehicles to historical details record when passed a hash of information" do
@@ -108,14 +108,14 @@ describe Factoric::Transactor do
       Factoric::FactStore.count
     }.by 3
 
-    transactor.entity_id.should_not be_nil
+    expect(transactor.entity_id).to_not be_nil
   end
 
   it "ignores question marks in keys" do
     transactor = TestTransactor.for_base_id 1
     facts = transactor.remember(model?: "Civic")
 
-    facts.first.fact_key.should == "model"
+    expect(facts.first.fact_key).to eq "model"
   end
 
   context "when forgetting" do
@@ -136,13 +136,13 @@ describe Factoric::Transactor do
 
       committed_fact = transactor.forget(fact.entity_id).first
 
-      committed_fact.should be_forgotten
-      committed_fact.fact_key.should == ""
-      committed_fact.value.should == ""
-      committed_fact.happened_at.should be_a Time
-      committed_fact.base_id.should == 1
-      committed_fact.entity.should == "Test"
-      committed_fact.entity_id.should == fact.entity_id
+      expect(committed_fact).to be_forgotten
+      expect(committed_fact.fact_key).to eq ""
+      expect(committed_fact.value).to eq ""
+      expect(committed_fact.happened_at).to be_a Time
+      expect(committed_fact.base_id).to eq 1
+      expect(committed_fact.entity).to eq "Test"
+      expect(committed_fact.entity_id).to eq fact.entity_id
     end
 
     it "adds a forget for the id and fact_key" do
@@ -151,19 +151,19 @@ describe Factoric::Transactor do
 
       committed_fact = transactor.forget(fact.entity_id, "model").first
 
-      committed_fact.should be_forgotten
-      committed_fact.fact_key.should == "model"
-      committed_fact.value.should == ""
-      committed_fact.happened_at.should be_a Time
-      committed_fact.base_id.should == 1
-      committed_fact.entity.should == "Test"
-      committed_fact.entity_id.should == fact.entity_id
+      expect(committed_fact).to be_forgotten
+      expect(committed_fact.fact_key).to eq "model"
+      expect(committed_fact.value).to eq ""
+      expect(committed_fact.happened_at).to be_a Time
+      expect(committed_fact.base_id).to eq 1
+      expect(committed_fact.entity).to eq "Test"
+      expect(committed_fact.entity_id).to eq fact.entity_id
     end
 
     it "translates the key" do
       transactor = TestTransactor.for_base_id 1
 
-      transactor.send(:translate_keys, { "foo" => "baz"}).should == { "bar" => "baz"}
+      expect(transactor.send(:translate_keys, { "foo" => "baz"})).to eq "bar" => "baz"
     end
 
     it "adds a forget for the id, fact_key, and value" do
@@ -172,13 +172,13 @@ describe Factoric::Transactor do
 
       committed_fact = transactor.forget(fact.entity_id, "model", "Civic").first
 
-      committed_fact.should be_forgotten
-      committed_fact.fact_key.should == "model"
-      committed_fact.value.should == "Civic"
-      committed_fact.happened_at.should be_a Time
-      committed_fact.base_id.should == 1
-      committed_fact.entity.should == "Test"
-      committed_fact.entity_id.should == fact.entity_id
+      expect(committed_fact).to be_forgotten
+      expect(committed_fact.fact_key).to eq "model"
+      expect(committed_fact.value).to eq "Civic"
+      expect(committed_fact.happened_at).to be_a Time
+      expect(committed_fact.base_id).to eq 1
+      expect(committed_fact.entity).to eq "Test"
+      expect(committed_fact.entity_id).to eq fact.entity_id
     end
   end
 end

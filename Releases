@@ -1,3 +1,6 @@
+Release 0.2 - Current
+  - Moved over the transactor with tests
+
 Release 0.1 
   - initial gem build
   - ported over historical details code and tests
