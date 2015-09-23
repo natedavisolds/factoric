@@ -1,0 +1,7 @@
+Roadmap
+
+- remove the need for active support in entity
+- allow to specify the field names
+- extract out converters
+  - add a way to add new converters
+- Fact model
